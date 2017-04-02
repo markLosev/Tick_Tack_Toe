@@ -1,0 +1,152 @@
+package recursiveBacktracking;
+
+import static recursion.AppSettings.trace;
+
+/**
+ *
+ * @author Mark
+ */
+public class Knight {
+    private int row;
+    private int col;
+    private boolean legalMove;
+    private static int solutionCounter;
+    
+    Knight(int row, int col) {
+        this.row = row;
+        this.col = col;
+    }
+    
+    Knight(Knight knight) {
+        this(knight.row, knight.col);
+    }
+    
+    public void tour(int moveNumber) {
+        if (moveNumber == 1) {
+            row = row - 2;
+            col = col + 1;
+        }
+        if (moveNumber == 2) {
+            row = row - 1;
+            col = col + 2;
+        }
+        if (moveNumber == 3) {
+            row = row + 1;
+            col = col + 2;
+        }
+        if (moveNumber == 4) {
+            row = row + 2;
+            col = col + 1; 
+        }
+        if (moveNumber == 5) {
+            row = row + 2;
+            col = col - 1;
+        }
+        if (moveNumber == 6) {
+            row = row + 1;
+            col = col - 2;
+        }
+        if (moveNumber == 7) {
+            row = row - 1;
+            col = col - 2;
+        }
+        if (moveNumber == 8) {
+            row = row - 2;
+            col = col - 1;
+        }
+    }
+    
+    public boolean isLegal(Board2 board) {
+        return (row >= 0 && row <= board.size - 1) && (col >= 0 && col <= board.size - 1);
+    }
+    
+    public boolean checkTour(int moveNumber, Board2 board) {
+        if (moveNumber == 1) {
+            tour(moveNumber);
+            legalMove = isLegal(board) && board.b[row][col] == 0;
+            row = row + 2;
+            col = col - 1;          
+        }
+        if (moveNumber == 2) {
+            tour(moveNumber);
+            legalMove = isLegal(board) && board.b[row][col] == 0;
+            row = row + 1;
+            col = col - 2;
+        }
+        if (moveNumber == 3) {
+            tour(moveNumber);
+            legalMove = isLegal(board) && board.b[row][col] == 0;
+            row = row - 1;
+            col = col - 2;
+        }
+        if (moveNumber == 4) {
+            tour(moveNumber);
+            legalMove = isLegal(board) && board.b[row][col] == 0;
+            row = row - 2;
+            col = col - 1;
+        }
+        if (moveNumber == 5) {
+            tour(moveNumber);
+            legalMove = isLegal(board) && board.b[row][col] == 0;
+            row = row - 2;
+            col = col + 1;
+        }
+        if (moveNumber == 6) {
+            tour(moveNumber);
+            legalMove = isLegal(board) && board.b[row][col] == 0;
+            row = row - 1;
+            col = col + 2;
+        }
+        if (moveNumber == 7) {
+            tour(moveNumber);
+            legalMove = isLegal(board) && board.b[row][col] == 0;
+            row = row + 1;
+            col = col + 2;
+        }
+        if (moveNumber == 8) {
+            tour(moveNumber);
+            legalMove = isLegal(board) && board.b[row][col] == 0;
+            row = row + 2;
+            col = col + 1;
+        }
+        return legalMove;
+    }
+    
+    public void knightsTour(Knight knight, Board2 board, int stepNumber) {
+        if(stepNumber == 1) {
+            board.b[knight.row][knight.col] = stepNumber;
+            stepNumber++;
+        }
+        for(int i = 1; i <= 8; i++) {
+            if (knight.checkTour(i, board)) {
+                Board2 boardCopy = new Board2(board);
+                Knight knightCopy = new Knight(knight);
+                knightCopy.tour(i);
+                boardCopy.b[knightCopy.row][knightCopy.col] = stepNumber;
+                if (stepNumber == boardCopy.size * boardCopy.size) {
+                    System.out.println(++solutionCounter);
+                    System.out.println("Solution");
+                    boardCopy.print();
+                    return;
+                }
+                else {
+                    trace("Recurse");
+                    trace(boardCopy.toString());
+                    knightsTour(knightCopy, boardCopy, stepNumber + 1);
+                }
+            }
+        }
+        trace("Dead End");
+        trace(board.toString());
+    }        
+    public static void main(String[] args) {
+         Board2 board = new Board2(8);
+         for(int Row = 0; Row < board.getSize(); Row++) {
+             for (int Column = 0; Column < board.getSize(); Column++) {
+                 Knight knightInArmor = new Knight(0,0);
+                 knightInArmor.knightsTour(new Knight(Row,Column),new Board2(board.size), 1);
+             }
+         }
+    }
+    
+}
